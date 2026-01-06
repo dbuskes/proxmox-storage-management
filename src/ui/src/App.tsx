@@ -23,12 +23,21 @@ function App() {
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    // Fetch token from coordinator first
+    // Fetch token from coordinator first, with fallback
     fetch(COORDINATOR_API + "/api/config")
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error('Config endpoint not available');
+        return r.json();
+      })
       .then((data) => {
         setToken(data.token);
         return data.token;
+      })
+      .catch(() => {
+        // Fallback: use default token for backwards compatibility
+        const fallbackToken = "9ad3bec3aa5eea7812ff261f781a03ad7eb6873e025e690e";
+        setToken(fallbackToken);
+        return fallbackToken;
       })
       .then((tkn) => {
         // Load initial data with token
