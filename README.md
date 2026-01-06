@@ -197,13 +197,60 @@ rm -rf /etc/pxstor
 systemctl daemon-reload
 ```
 
-## 🔐 Security Notes
+## 🔐 Security & Transparency
+
+### About the Standalone Installer
+
+The `install-standalone-PSM-FINAL.sh` is a self-contained installer that includes base64-encoded binaries for convenience. **We understand this may raise security concerns.**
+
+### Build from Source (Recommended for Security-Conscious Users)
+
+If you prefer to build from source and verify the code yourself:
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/dbuskes/proxmox-storage-management.git
+cd proxmox-storage-management
+
+# 2. Install dependencies (Go 1.20+, Node.js 18+)
+apt update && apt install -y golang-go nodejs npm
+
+# 3. Build the agent
+cd src/agent
+go build -o /opt/pxstor/bin/pxstor-agent .
+
+# 4. Build the coordinator
+cd ../coordinator
+go build -o /opt/pxstor/bin/pxstor-coordinator .
+
+# 5. Build the UI
+cd ../ui
+npm install
+npm run build
+mkdir -p /opt/pxstor/ui
+cp -r dist/* /opt/pxstor/ui/
+
+# 6. Set up configuration (see installation docs)
+```
+
+**Note:** Full source code is available in the repository for review. The standalone installer is generated from the same source using our build script.
+
+### Security Features
 
 - PSM uses token-based authentication for API access
 - The default token is randomly generated during installation
 - PSM runs on localhost ports and should be accessed through your Proxmox server's IP
 - For production use, consider placing PSM behind a reverse proxy with HTTPS
 - Firewall rules: Ensure ports 8086 and 8087 are accessible from your network
+
+### Verify the Installer
+
+Check the SHA256 checksum of your downloaded installer:
+```bash
+sha256sum install-standalone-PSM-FINAL.sh
+```
+
+Compare with the checksum published in the release notes.
 
 ## 🤝 Contributing
 

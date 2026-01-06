@@ -1,0 +1,9 @@
+# SHA256 Checksums for PSM v1.0
+
+## Verify your downloads:
+# Linux/Mac: sha256sum -c CHECKSUMS.txt
+# Windows: Get-FileHash <file> -Algorithm SHA256
+
+8134E4433738B3640B60FC32E419725E412D8C94EA0B2ABA458D376566CBFFC0  install-standalone-PSM-FINAL.sh
+
+## Individual scripts checksums will be added here
