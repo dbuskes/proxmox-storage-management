@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import "./App.css";
 
 const API = "http://" + window.location.hostname + ":8086";
-const TOKEN = "9ad3bec3aa5eea7812ff261f781a03ad7eb6873e025e690e";
+const COORDINATOR_API = "http://" + window.location.hostname + ":8087";
 
 function App() {
   const [storages, setStorages] = useState([]);
@@ -19,28 +19,40 @@ function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("name");
   const [sortDir, setSortDir] = useState("asc");
+  const [token, setToken] = useState("");
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    fetch(API + "/api/storages", { headers: { Authorization: "Bearer " + TOKEN } })
+    // Fetch token from coordinator first
+    fetch(COORDINATOR_API + "/api/config")
       .then((r) => r.json())
-      .then(setStorages)
-      .catch(console.error);
+      .then((data) => {
+        setToken(data.token);
+        return data.token;
+      })
+      .then((tkn) => {
+        // Load initial data with token
+        fetch(API + "/api/storages", { headers: { Authorization: "Bearer " + tkn } })
+          .then((r) => r.json())
+          .then(setStorages)
+          .catch(console.error);
 
-    fetch(API + "/api/node", { headers: { Authorization: "Bearer " + TOKEN } })
-      .then((r) => r.json())
-      .then(setNodeInfo)
-      .catch(console.error);
+        fetch(API + "/api/node", { headers: { Authorization: "Bearer " + tkn } })
+          .then((r) => r.json())
+          .then(setNodeInfo)
+          .catch(console.error);
 
-    const loadStats = () => {
-      fetch(API + "/api/stats", { headers: { Authorization: "Bearer " + TOKEN } })
-        .then((r) => r.json())
-        .then(setStats)
-        .catch(console.error);
-    };
-    loadStats();
-    const statsInterval = setInterval(loadStats, 2000);
-    return () => clearInterval(statsInterval);
+        const loadStats = () => {
+          fetch(API + "/api/stats", { headers: { Authorization: "Bearer " + tkn } })
+            .then((r) => r.json())
+            .then(setStats)
+            .catch(console.error);
+        };
+        loadStats();
+        const statsInterval = setInterval(loadStats, 2000);
+        return () => clearInterval(statsInterval);
+      })
+      .catch(console.error);
   }, []);
 
   const loadContent = (st) => {
@@ -48,7 +60,7 @@ function App() {
     setCheckedItems([]);
     ["iso", "vztmpl", "backup"].forEach((t) => {
       fetch(API + "/api/content?storage=" + st.ID + "&type=" + t, {
-        headers: { Authorization: "Bearer " + TOKEN },
+        headers: { Authorization: "Bearer " + token },
       })
         .then((r) => r.json())
         .then((d) => setContent((prev) => ({ ...prev, [t]: d.items || [] })))
@@ -83,7 +95,7 @@ function App() {
     try {
       const res = await fetch(API + "/api/jobs", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: "Bearer " + TOKEN },
+        headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
         body: JSON.stringify({ op: opName, items: jobItems, target: { storage: targetStorage, dir: targetDir } }),
       });
       const data = await res.json();
@@ -109,7 +121,7 @@ function App() {
     formData.append("type", tab);
 
     try {
-      const res = await fetch(API + "/api/upload", { method: "POST", headers: { Authorization: "Bearer " + TOKEN }, body: formData });
+      const res = await fetch(API + "/api/upload", { method: "POST", headers: { Authorization: "Bearer " + token }, body: formData });
       const data = await res.json();
       if (data.job_id) {
         setProgress({ jobId: data.job_id, status: "running", progress: 0, total: file.size, current: file.name, failed: [] });
@@ -125,7 +137,7 @@ function App() {
   const pollJob = (jobId) => {
     const interval = setInterval(async () => {
       try {
-        const res = await fetch(API + "/api/jobs/" + jobId, { headers: { Authorization: "Bearer " + TOKEN } });
+        const res = await fetch(API + "/api/jobs/" + jobId, { headers: { Authorization: "Bearer " + token } });
         const data = await res.json();
         setProgress({ jobId, status: data.status, progress: data.progress, total: data.total, current: data.current || "", failed: data.failed || [] });
         if (data.status === "completed" || data.status === "failed") clearInterval(interval);
@@ -144,7 +156,7 @@ function App() {
 
   const downloadFile = (item) => {
     const link = document.createElement("a");
-    link.href = API + "/api/download?path=" + encodeURIComponent(item.path) + "&token=" + TOKEN;
+    link.href = API + "/api/download?path=" + encodeURIComponent(item.path) + "&token=" + token;
     link.download = item.name;
     link.click();
   };
