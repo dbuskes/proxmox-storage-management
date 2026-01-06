@@ -60,12 +60,12 @@ Your support helps keep this project alive and enables new features!
 SSH into your Proxmox server and run this single command:
 
 ```bash
-curl -L https://github.com/YOUR-USERNAME/proxmox-storage-management/releases/latest/download/install-standalone-PSM-FINAL.sh -o /tmp/psm-install.sh && bash /tmp/psm-install.sh
+curl -L https://github.com/dbuskes/proxmox-storage-management/releases/latest/download/install-standalone-PSM-FINAL.sh -o /tmp/psm-install.sh && bash /tmp/psm-install.sh
 ```
 
 Or using wget:
 ```bash
-wget -O /tmp/psm-install.sh https://github.com/YOUR-USERNAME/proxmox-storage-management/releases/latest/download/install-standalone-PSM-FINAL.sh && bash /tmp/psm-install.sh
+wget -O /tmp/psm-install.sh https://github.com/dbuskes/proxmox-storage-management/releases/latest/download/install-standalone-PSM-FINAL.sh && bash /tmp/psm-install.sh
 ```
 
 Then access PSM at `http://YOUR-PROXMOX-IP:8087`
@@ -164,7 +164,29 @@ journalctl -u pxstor-coordinator -f
 
 ## 🗑️ Uninstallation
 
-To completely remove PSM from your Proxmox server:
+### Option 1: Direct from Proxmox Shell
+
+SSH into your Proxmox server and run:
+
+```bash
+curl -L https://github.com/dbuskes/proxmox-storage-management/releases/latest/download/uninstall.sh -o /tmp/psm-uninstall.sh && bash /tmp/psm-uninstall.sh
+```
+
+Or using wget:
+```bash
+wget -O /tmp/psm-uninstall.sh https://github.com/dbuskes/proxmox-storage-management/releases/latest/download/uninstall.sh && bash /tmp/psm-uninstall.sh
+```
+
+### Option 2: Using Windows PowerShell
+
+If you have the `uninstall.ps1` script:
+```powershell
+.\uninstall.ps1
+```
+
+### Option 3: Manual Removal
+
+SSH into your Proxmox server and run these commands:
 
 ```bash
 systemctl stop pxstor-agent pxstor-coordinator
@@ -173,11 +195,6 @@ rm /etc/systemd/system/pxstor-*.service
 rm -rf /opt/pxstor
 rm -rf /etc/pxstor
 systemctl daemon-reload
-```
-
-Or use the included uninstall script (if you have it):
-```powershell
-.\uninstall.ps1
 ```
 
 ## 🔐 Security Notes
@@ -213,3 +230,4 @@ Built for the Proxmox VE community to simplify storage management workflows.
 ---
 
 **Made with ❤️ for Proxmox administrators**
+
