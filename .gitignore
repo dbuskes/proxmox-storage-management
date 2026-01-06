@@ -1,0 +1,36 @@
+# Backups and temporary files
+*.bak
+*.backup
+*.old
+*.tmp
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Compiled binaries (if building from source)
+*.exe
+agent
+coordinator
+
+# Node modules (if included)
+node_modules/
+
+# Build artifacts
+dist/
+build/
+
+# Test files
+test-*.sh
+*.test
