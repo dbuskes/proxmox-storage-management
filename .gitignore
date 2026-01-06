@@ -26,10 +26,12 @@ coordinator
 
 # Node modules (if included)
 node_modules/
+src/ui/node_modules/
 
 # Build artifacts
 dist/
 build/
+src/ui/dist/
 
 # Test files
 test-*.sh
