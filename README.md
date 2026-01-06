@@ -4,6 +4,20 @@ A modern, web-based storage management interface for Proxmox VE. Simplify ISO, V
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
+---
+
+## ☕ Support This Project
+
+**Enjoying PSM?** If this tool saves you time and makes your Proxmox life easier, consider buying me a coffee! ☕
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Revolut-Support%20Me-0075EB?style=for-the-badge&logo=revolut&logoColor=white)](https://revolut.me/thebuckie)
+
+**[💙 Support via Revolut](https://revolut.me/thebuckie)**
+
+Your support helps keep this project alive and enables new features!
+
+---
+
 ## ✨ Features
 
 - **🎯 Unified Interface** - Manage all storage types (ISO, templates, backups) from one clean UI
