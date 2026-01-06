@@ -33,13 +33,14 @@ function App() {
         setToken(data.token);
         return data.token;
       })
-      .catch(() => {
-        // Fallback: use default token for backwards compatibility
-        const fallbackToken = "9ad3bec3aa5eea7812ff261f781a03ad7eb6873e025e690e";
-        setToken(fallbackToken);
-        return fallbackToken;
+      .catch((err) => {
+        // If config endpoint fails, show error - coordinator needs to be updated
+        console.error('Failed to fetch config from coordinator:', err);
+        alert('PSM configuration error. Please ensure your PSM installation is up to date.');
+        return null;
       })
       .then((tkn) => {
+        if (!tkn) return; // Exit if token fetch failed
         // Load initial data with token
         fetch(API + "/api/storages", { headers: { Authorization: "Bearer " + tkn } })
           .then((r) => r.json())
